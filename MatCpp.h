@@ -5,43 +5,24 @@ using namespace std;
 
 namespace CppToolBox {
 	
-	void swap(double** input, double**output, int dimension, int first_row, int second_row)
-	{
-		double* temp_row1 = new double[dimension];
-		double* temp_row2 = new double[dimension];
-		int i;
-		for (i = 0; i<dimension; i++)
-		{
-			temp_row1[i] = input[first_row][i];
-			temp_row2[i] = output[first_row][i];
-		}
-		for (i = 0; i<dimension; i++)
-		{
-			input[first_row][i] = input[second_row][i];
-			output[first_row][i] = output[second_row][i];
-			input[second_row][i] = temp_row1[i];
-			output[second_row][i] = temp_row2[i];
-		}
-		delete[] temp_row1;
-		delete[] temp_row2;
-	}
-	void reorderOutput(double** output, int dimension)
-	{
-		double**temp = new double*[dimension];
-		for (int i = 0; i<dimension; ++i)
-			temp[i] = new double[dimension];
+	//void swap(double** input, double**output, int dimension, int first_row, int second_row);
+	//void reorderOutput(double** output, int dimension)
+	//{
+	//	double**temp = new double*[dimension];
+	//	for (int i = 0; i<dimension; ++i)
+	//		temp[i] = new double[dimension];
 
-		for (int i = 1; i<dimension; ++i)
-			memcpy(temp[i - 1], output[i], sizeof(double)*dimension);
-		memcpy(temp[dimension - 1], output[0], sizeof(double)*dimension);
+	//	for (int i = 1; i<dimension; ++i)
+	//		memcpy(temp[i - 1], output[i], sizeof(double)*dimension);
+	//	memcpy(temp[dimension - 1], output[0], sizeof(double)*dimension);
 
-		for (int i = 0; i<dimension; ++i)
-			memcpy(output[i], temp[i], sizeof(double)*dimension);
+	//	for (int i = 0; i<dimension; ++i)
+	//		memcpy(output[i], temp[i], sizeof(double)*dimension);
 
-		for (int i = 0; i<dimension; ++i)
-			delete[] temp[i];
-		delete[] temp;
-	}
+	//	for (int i = 0; i<dimension; ++i)
+	//		delete[] temp[i];
+	//	delete[] temp;
+	//}
 	class Vector {
 	private:
 		double * data;
@@ -84,10 +65,25 @@ namespace CppToolBox {
 		//public methods
 	public:
 		//static methods
-		static Matrix eyes(int dimension)
+		static Matrix eye(int dim)
 		{
-			Matrix total = Matrix(dimension, dimension);
-			for (int i = 0; i < dimension; i++)total.data[i][i] = 1;
+			Matrix total = Matrix(dim, dim);
+			for (int i = 0;i < dim;i++)total.data[i][i] = 1;
+			return total;
+		}
+		static Matrix ones(int dim1, int dim2)
+		{
+			Matrix total = Matrix(dim1, dim2);
+			for (int i = 0;i < dim1;i++)
+				for (int j = 0;j < dim2;j++)
+					total.data[i][j] = 1;
+			return total;
+		}
+		static Matrix eye(int dim1,int dim2)
+		{
+			Matrix total = Matrix(dim1, dim2);
+			int min = dim1 > dim2 ? dim2 : dim1;
+			for (int i = 0; i < dim1; i++)total.data[i][i] = 1;
 			return total;
 		}
 		static void LMS(const Matrix & Z, const Matrix & H, const Matrix & D, Matrix & X, Matrix & S, Matrix & V)

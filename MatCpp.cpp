@@ -167,7 +167,7 @@ namespace CppToolBox {
 	}
 	Matrix Matrix::operator*(const Matrix & obj)const
 	{
-		Matrix total = Matrix(obj.rows,obj.cols);
+		Matrix total = Matrix(rows,obj.cols);
 		double num = 0.0;
 		if (cols == obj.rows)
 			for (int i = 0; i < rows; i++)
@@ -175,7 +175,7 @@ namespace CppToolBox {
 					for (int k = 0; k < cols; k++)
 					{
 						num = data[i][k] * obj.data[k][j];
-						obj.data[i][j] += num;
+						total.data[i][j] += num;
 					}
 		else throw "operator* failed due to dimension mismatch";
 		return total;
@@ -208,7 +208,7 @@ namespace CppToolBox {
 	{
 		Matrix M1_copy = *this;
 		int dimension = cols;
-		Matrix out = eyes(dimension);
+		Matrix out = eye(dimension);
 		double ** input = M1_copy.data;
 		double ** output = out.data;
 		int i, j, k;
