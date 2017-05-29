@@ -42,7 +42,7 @@ namespace CppToolBox {
 		return data;
 	}
 	Vector::Vector() :length(0), data(NULL), is_shared(false) {}
-	Vector::Vector(Vector & vec) :length(vec.length)
+	Vector::Vector(const Vector & vec) :length(vec.length)
 	{
 		data = new double[length];
 		is_shared = false;
@@ -57,11 +57,20 @@ namespace CppToolBox {
 		data = new double[length];
 		memcpy(data, value, sizeof(double) * length);
 	}
+	Vector Vector::operator+(Matrix & obj)const
+	{
+		Vector total = Vector(*this);
+		for (int i = 0;i < length;i++)
+		{
+			total.data[i] += obj[i][0];
+		}
+		return total;
+	}
 	Vector::~Vector()
 	{
 		if (data && !is_shared)delete[] data;
 	}
-	double & Vector::operator[](int index)
+	double & Vector::operator[](int index)const
 	{
 		if (index < 0 || index >= length)throw "index out of bounds in vector";
 		return data[index];
@@ -175,6 +184,21 @@ namespace CppToolBox {
 					for (int k = 0; k < cols; k++)
 					{
 						num = data[i][k] * obj.data[k][j];
+						total.data[i][j] += num;
+					}
+		else throw "operator* failed due to dimension mismatch";
+		return total;
+	}
+	Matrix Matrix::operator*(const Vector & obj)const
+	{
+		Matrix total = Matrix(rows, 1);
+		double num = 0.0;
+		if (cols == obj.length)
+			for (int i = 0; i < rows; i++)
+				for (int j = 0; j < 1; j++)
+					for (int k = 0; k < cols; k++)
+					{
+						num = data[i][k] * obj[k];
 						total.data[i][j] += num;
 					}
 		else throw "operator* failed due to dimension mismatch";

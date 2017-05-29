@@ -4,25 +4,7 @@
 using namespace std;
 
 namespace CppToolBox {
-	
-	//void swap(double** input, double**output, int dimension, int first_row, int second_row);
-	//void reorderOutput(double** output, int dimension)
-	//{
-	//	double**temp = new double*[dimension];
-	//	for (int i = 0; i<dimension; ++i)
-	//		temp[i] = new double[dimension];
-
-	//	for (int i = 1; i<dimension; ++i)
-	//		memcpy(temp[i - 1], output[i], sizeof(double)*dimension);
-	//	memcpy(temp[dimension - 1], output[0], sizeof(double)*dimension);
-
-	//	for (int i = 0; i<dimension; ++i)
-	//		memcpy(output[i], temp[i], sizeof(double)*dimension);
-
-	//	for (int i = 0; i<dimension; ++i)
-	//		delete[] temp[i];
-	//	delete[] temp;
-	//}
+	class Matrix;
 	class Vector {
 	private:
 		double * data;
@@ -39,11 +21,77 @@ namespace CppToolBox {
 		}
 		double * get_array();
 		Vector();
-		Vector(Vector & vec);
+		Vector(const Vector & vec);
 		Vector(int len);
 		Vector(double * value, int len);
 		~Vector();
-		double & operator[](int index);
+		double & operator[](int index)const;
+		Vector operator=(const Vector & obj)
+		{
+			length = obj.length;
+			data = new double[length];
+			is_shared = false;
+			memcpy(data, obj.data, sizeof(double) * length);
+			return *this;
+		}
+		double mod()const
+		{
+			double total = 0;
+			for (int i = 0;i < length;i++)total += data[i] * data[i];
+			return sqrt(total);
+		}
+		double operator*(const Vector & obj)const
+		{
+			double total = 0;
+			if (length != obj.length)throw "dimention mismatch in vector multiply.";
+			else {
+				for (int i = 0;i < length;i++)total += data[i] * obj.data[i];
+				return total;
+			}
+		}
+		Vector operator*(const double obj)const
+		{
+			Vector total = Vector(*this);
+			for (int i = 0;i < length;i++)total.data[i] *= obj;
+			return total;
+		}
+		Vector operator+(const Vector & obj)const
+		{
+			Vector total = Vector(*this);
+			for (int i = 0;i < length;i++)
+			{
+				total.data[i] += obj.data[i];
+			}
+			return total;
+		}
+		Vector operator+(Matrix & obj)const;
+		Vector operator-(const Vector & obj)const 
+		{
+			Vector total = Vector(*this);
+			for (int i = 0;i < length;i++)total.data[i] -= obj.data[i];
+			return total;
+		}
+		Vector operator/(const double obj)const
+		{
+			Vector total = Vector(*this);
+			for (int i = 0;i < length;i++)total.data[i] /= obj;
+			return total;
+		}
+		//friend Vector operator*(double obj, Vector & sub)
+		//{
+
+		//}
+		Vector cross(const Vector & obj)const
+		{
+			if (length != 3 || obj.length != 3) throw "dimention invalid in vector cross.";
+			else {
+				Vector total = Vector(3);
+				total.data[0] = data[1] * obj.data[2] - data[2] * obj.data[1];
+				total.data[1] = data[2] * obj.data[0] - data[0] * obj.data[2];
+				total.data[2] = data[0] * obj.data[1] - data[1] * obj.data[0];
+				return total;
+			}
+		}
 	};
 	
 	class Matrix
@@ -131,6 +179,7 @@ namespace CppToolBox {
 		Matrix operator+(const double obj)const;
 		Matrix operator*(const Matrix & obj)const;
 		Matrix operator*(const double obj)const;
+		Matrix operator*(const Vector & obj)const;
 		Vector & operator[](int row);
 		Matrix t()const;
 		Matrix inv()const;
